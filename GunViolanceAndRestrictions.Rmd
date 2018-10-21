@@ -1,0 +1,49 @@
+---
+title: "GunViolanceAndRestrictions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Gun Violance by state and year
+
+```{r Gun Violance}
+getwd()
+setwd("./R/project1")
+
+violance.gun <- data.frame(read.csv("gun-violence.csv"))
+View(violance.gun)
+violance.restriction <- data.frame(read.csv("state-restriction.csv"))
+View(violance.restriction)
+
+restriction <- data.frame(violance.restriction$state, violance.restriction$year, violance.restriction$lawtotal)
+str(restriction)
+
+violance <- data.frame(violance.gun$date, violance.gun$state, violance.gun$n_killed, violance.gun$n_injured)
+str(violance)
+year <- format(as.Date(violance.gun$date, "%Y-%m-%d"), "%Y")
+state <-violance.gun$state
+voilence <- violance.gun$n_killed + violance.gun$n_injured
+voilDF1 <- data.frame(year, state, voilence)
+View(voilDF1)
+
+voilenceYearlyByState <- voilDF1 %>% group_by(year, state) %>%
+    summarise(total.voilence = sum(voilence))
+View(voilenceYearlyByState)
+
+df<-merge(x=restriction,y=voilenceYearlyByState, by=c("state", "year"))
+
+str(violance)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
